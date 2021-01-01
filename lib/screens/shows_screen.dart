@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:magg/coin_data.dart';
 import 'package:magg/main_alt.dart';
 
 
