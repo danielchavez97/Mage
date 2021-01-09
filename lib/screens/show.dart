@@ -48,11 +48,7 @@ class _ShowScreenState extends State<ShowScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      themeMode: ThemeMode.dark,
-      darkTheme: ThemeData(brightness: Brightness.dark),
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: Text('mage', style: GoogleFonts.getFont('Oxygen')),
         ),
@@ -113,8 +109,7 @@ class _ShowScreenState extends State<ShowScreen> {
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 }
 

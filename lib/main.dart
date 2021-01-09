@@ -67,14 +67,14 @@ class MyPage1Widget extends StatelessWidget {
         children: <Widget>[
           ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
-            child: Image.network(
-              'https://i1.sndcdn.com/avatars-000306077932-3ehugq-t500x500.jpg',
+            child: AspectRatio(aspectRatio: 1.0/1.0,child: Image.network(
+              'https://static.wixstatic.com/media/869ff8_4dcf426e192b41d7815db8879769ea2b~mv2.png/v1/fill/w_560,h_390,al_c,lg_1,q_85/869ff8_4dcf426e192b41d7815db8879769ea2b~mv2.webp',
             ),
-          ),
+          ),),
           ListTile(
             isThreeLine: true,
-            title: Text('Dekmantel'),
-            subtitle: Text('Dutch based label with a reputation for quality.',
+            title: Text('Hora Latina'),
+            subtitle: Text('A series showcasing latin music from around the world.',
                 maxLines: 2, overflow: TextOverflow.ellipsis),
           ),
           ButtonBar(
