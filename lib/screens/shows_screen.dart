@@ -1,39 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:magg/main_alt.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:magg/components/show_card.dart';
+import 'package:magg/models/show.dart';
+import 'package:magg/services/api.dart';
 
-
-class ShowsScreen extends StatefulWidget{
-  ShowsScreen({this.userShows});
-
-  final userShows;
-
+class ShowsScreen extends StatefulWidget {
 
   @override
   _ShowsPageState createState() => _ShowsPageState();
 }
 
 class _ShowsPageState extends State<ShowsScreen> {
-  Map test;
-  List<Widget> cardData = List<Widget>();
-  // Global variables go here
+  ShowData _show_data;
+  List<Widget> _card_data;
+
   @override
   void initState() {
     super.initState();
-    updateUI(widget.userShows);
+    _card_data = [];
+    _show_data = ShowData();
   }
 
-
-  void updateUI(dynamic showsData) {
-    setState((){
-      if (showsData == null){
-        return;
-      }
-      test = showsData;
-      for (Map Show in test['results']) {
-        cardData.add(ShowCard(Show: Show));
-      }
-      });
-  }
 
   PageController _controller = PageController(
     initialPage: 0,
@@ -42,70 +29,46 @@ class _ShowsPageState extends State<ShowsScreen> {
   @override
   void dispose() {
     _controller.dispose();
+    _show_data.dispose();
     super.dispose();
   }
 
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Magg')
-      ),
-      body: PageView(
-          controller: _controller,
-          scrollDirection: Axis.horizontal,
-          children: cardData
-      ),
+    return RefreshIndicator(
+        onRefresh: () {_card_data = [];
+        return _show_data.fetchShowList();},
+        child: StreamBuilder(
+            stream: _show_data.showListStream,
+            builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+              if (snapshot.hasData) {
+                switch (snapshot.data.status) {
+                  case Status.LOADING:
+                    return Center(
+                      child: SpinKitDoubleBounce(
+                        color: Colors.white,
+                        size: 100.0,
+                      ),
+                    );
+                    break;
+                  case Status.COMPLETED:
+                    for (Show _ in snapshot.data.data) {
+                      _card_data.add(ShowCard(show: _));
+                    }
+                    return ListView(children: _card_data);
+                    break;
+                  case Status.ERROR:
+                    return snapshot.data.data;
+                    break;
+                }
+                return PageView(children: [Card()]);
+              }
+              return Container();
+            })
     );
   }
 }
 
-class ShowCard extends StatelessWidget {
-  const ShowCard({
-    Key key,
-    @required this.Show,
-  }) : super(key: key);
 
-  final Map Show;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(15.0),
-    ),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8.0),
-          child: Image.network(
-            Show['thumbnail'],
-            fit: BoxFit.fill,
-          ),
-        ),
-        ListTile(
-          title: Text(Show['name']),
-          subtitle:
-          Text(Show["description"]),
-        ),
-        ButtonBar(
-          children: <Widget>[
-            FlatButton(
-              child: Text('Catalogue'),
-              onPressed: () {/* ... */},
-            ),
-            FlatButton(
-              child: Text('Profile'),
-              onPressed: () {/* ... */},
-            ),
-          ],
-        ),
-      ],
-    ),
-      );
-  }
-}
 
